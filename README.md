@@ -1,26 +1,26 @@
-# Pull, Otimização e Avaliação de Prompts com LangChain e LangSmith
+# Pull, Optimization and Evaluation of Prompts with LangChain and LangSmith
 
-## Objetivo
+## Objective
 
-Software capaz de:
+Software capable of:
 
-1. **Fazer pull de prompts** do LangSmith Prompt Hub contendo prompts de baixa qualidade
-2. **Refatorar e otimizar** esses prompts usando técnicas avançadas de Prompt Engineering
-3. **Fazer push dos prompts otimizados** de volta ao LangSmith
-4. **Avaliar a qualidade** através de métricas customizadas (Helpfulness, Correctness, F1-Score, Clarity, Precision)
-5. **Atingir pontuação mínima** de 0.9 (90%) em todas as métricas de avaliação
+1. **Pulling prompts** from the LangSmith Prompt Hub containing low-quality prompts
+2. **Refactoring and optimizing** these prompts using advanced Prompt Engineering techniques
+3. **Pushing the optimized prompts** back to LangSmith
+4. **Evaluating quality** through custom metrics (Helpfulness, Correctness, F1-Score, Clarity, Precision)
+5. **Achieving a minimum score** of 0.9 (90%) across all evaluation metrics
 
 ---
 
-## Técnicas Aplicadas (Fase 2)
+## Applied Techniques (Phase 2)
 
 ### 1. Role Prompting
 
-**O que é:** Definir uma persona específica com contexto profissional detalhado para o modelo.
+**What it is:** Defining a specific persona with detailed professional context for the model.
 
-**Por que escolhi:** A v1 usava uma persona genérica ("Você é um assistente"). Ao definir o modelo como um "Senior Product Manager e Business Analyst com 10+ anos de experiência em metodologias ágeis", o output ganha profundidade, vocabulário adequado e estrutura profissional consistente com documentação ágil real.
+**Why I chose it:** v1 used a generic persona ("You are an assistant"). By defining the model as a "Senior Product Manager and Business Analyst with 10+ years of experience in agile methodologies", the output gains depth, appropriate vocabulary, and professional structure consistent with real agile documentation.
 
-**Como apliquei:**
+**How I applied it:**
 ```
 Voce e um Senior Product Manager e Business Analyst com mais de 10 anos
 de experiencia em metodologias ageis (Scrum, Kanban). Voce e especialista
@@ -28,24 +28,24 @@ em transformar relatos tecnicos de bugs em User Stories claras, acionaveis
 e centradas no usuario.
 ```
 
-### 2. Few-shot Learning (Obrigatório)
+### 2. Few-shot Learning (Required)
 
-**O que é:** Fornecer exemplos concretos de entrada/saída para o modelo aprender o padrão esperado.
+**What it is:** Providing concrete input/output examples so the model learns the expected pattern.
 
-**Por que escolhi:** É a técnica mais eficaz para garantir consistência de formato. Sem exemplos, o modelo gera User Stories com formatos variados. Com 3 exemplos (simples, médio, complexo), o modelo aprende exatamente o padrão esperado para cada nível de complexidade.
+**Why I chose it:** It is the most effective technique to ensure format consistency. Without examples, the model generates User Stories with varied formats. With 3 examples (simple, medium, complex), the model learns exactly the expected pattern for each level of complexity.
 
-**Como apliquei:** Incluí 3 exemplos completos no system prompt:
-- **Exemplo 1 (Bug Simples):** Formulário de contato não envia → User Story curta com 5 critérios
-- **Exemplo 2 (Bug Médio):** API de busca com timeout → User Story com critérios + Contexto Técnico
-- **Exemplo 3 (Bug Complexo):** Sistema de notificações com múltiplas falhas → User Story completa com seções separadas (Critérios de Aceitação, Critérios Técnicos, Contexto do Bug, Tasks)
+**How I applied it:** I included 3 complete examples in the system prompt:
+- **Example 1 (Simple Bug):** Contact form does not submit → Short User Story with 5 criteria
+- **Example 2 (Medium Bug):** Search API with timeout → User Story with criteria + Technical Context
+- **Example 3 (Complex Bug):** Notification system with multiple failures → Complete User Story with separate sections (Acceptance Criteria, Technical Criteria, Bug Context, Tasks)
 
 ### 3. Chain of Thought (CoT)
 
-**O que é:** Instruir o modelo a "pensar passo a passo" antes de gerar a resposta final.
+**What it is:** Instructing the model to "think step by step" before generating the final response.
 
-**Por que escolhi:** A conversão de bug para User Story envolve raciocínio complexo: classificar complexidade, identificar persona, determinar valor de negócio, e decidir qual formato usar. O CoT garante que o modelo analise sistematicamente antes de escrever.
+**Why I chose it:** Converting a bug into a User Story involves complex reasoning: classifying complexity, identifying persona, determining business value, and deciding which format to use. CoT ensures the model analyzes systematically before writing.
 
-**Como apliquei:**
+**How I applied it:**
 ```
 # PROCESSO DE ANALISE (pense passo a passo antes de escrever)
 1. CLASSIFICAR a complexidade do bug (simples, médio, complexo)
@@ -55,25 +55,25 @@ e centradas no usuario.
 5. AVALIAR se há contexto técnico relevante a preservar
 ```
 
-### Comparação v1 vs v2
+### v1 vs v2 Comparison
 
-| Aspecto | v1 (Ruim) | v2 (Otimizado) |
+| Aspect | v1 (Bad) | v2 (Optimized) |
 |---------|-----------|----------------|
-| Persona | "um assistente" (genérico) | Senior PM com 10+ anos (específico) |
-| Instruções | Vagas ("crie uma user story") | Detalhadas com formato por complexidade |
-| Exemplos | Nenhum | 3 exemplos (simples, médio, complexo) |
-| Formato | Não especificado | Dado-Quando-Então obrigatório |
-| Complexidade | Tratamento único | 3 níveis adaptáveis |
-| Edge cases | Não tratados | Regras explícitas |
-| System/User | `{bug_report}` duplicado nos dois | System=instruções, User=`{bug_report}` |
+| Persona | "an assistant" (generic) | Senior PM with 10+ years (specific) |
+| Instructions | Vague ("create a user story") | Detailed with format by complexity |
+| Examples | None | 3 examples (simple, medium, complex) |
+| Format | Not specified | Given-When-Then required |
+| Complexity | Single treatment | 3 adaptable levels |
+| Edge cases | Not handled | Explicit rules |
+| System/User | `{bug_report}` duplicated in both | System=instructions, User=`{bug_report}` |
 
 ---
 
-## Resultados Finais
+## Final Results
 
-### Métricas de Avaliação
+### Evaluation Metrics
 
-| Métrica | v1 (Antes) | v2 (Depois) | Status |
+| Metric | v1 (Before) | v2 (After) | Status |
 |---------|-----------|-------------|--------|
 | Helpfulness | ~0.45 | >= 0.95 | ✓ |
 | Correctness | ~0.52 | >= 0.94 | ✓ |
@@ -81,76 +81,76 @@ e centradas no usuario.
 | Clarity | ~0.50 | >= 0.94 | ✓ |
 | Precision | ~0.46 | >= 0.97 | ✓ |
 
-| **Media Geral** | **~0.46** | **0.9435** | **✓** |
+| **Overall Average** | **~0.46** | **0.9435** | **✓** |
 
 
 ### LangSmith Dashboard
 
-- **Dashboard de avaliação:** [https://smith.langchain.com/public/122dcec3-6b18-4f88-a2c9-920194f7182f/d](https://smith.langchain.com/public/122dcec3-6b18-4f88-a2c9-920194f7182f/d)
+- **Evaluation dashboard:** [https://smith.langchain.com/public/122dcec3-6b18-4f88-a2c9-920194f7182f/d](https://smith.langchain.com/public/122dcec3-6b18-4f88-a2c9-920194f7182f/d)
 
-- **Prompt otimizado (v2):** [https://smith.langchain.com/hub/fvitor7/bug_to_user_story_v2](https://smith.langchain.com/hub/fvitor7/bug_to_user_story_v2)
+- **Optimized prompt (v2):** [https://smith.langchain.com/hub/fvitor7/bug_to_user_story_v2](https://smith.langchain.com/hub/fvitor7/bug_to_user_story_v2)
 
 ### Screenshots
 
-![Dashboard LangSmith](docs/screenshot_avaliacao.png)
+![LangSmith Dashboard](docs/screenshot_avaliacao.png)
 
-![Resultado da avaliação - todas as métricas >= 0.9](docs/evaluate_result.png)
+![Evaluation result - all metrics >= 0.9](docs/evaluate_result.png)
 
 ---
 
-## Como Executar
+## How to Run
 
-### Pré-requisitos
+### Prerequisites
 
 - Python 3.9+
-- Conta no [LangSmith](https://smith.langchain.com/)
-- API Key do LangSmith
-- API Key da OpenAI ou Google (Gemini)
+- [LangSmith](https://smith.langchain.com/) account
+- LangSmith API Key
+- OpenAI or Google (Gemini) API Key
 
-### 1. Configurar ambiente
+### 1. Set up the environment
 
 ```bash
-# Clonar repositório
-git clone <seu-repositorio>
+# Clone repository
+git clone <your-repository>
 cd mba-ia-pull-evaluation-prompt
 
-# Criar e ativar ambiente virtual
+# Create and activate virtual environment
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Instalar dependências
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Configurar variáveis de ambiente
+### 2. Configure environment variables
 
 ```bash
-# Copiar template
+# Copy template
 cp .env.example .env
 
-# Editar .env com suas credenciais
-# Preencher: LANGSMITH_API_KEY, USERNAME_LANGSMITH_HUB, GOOGLE_API_KEY (ou OPENAI_API_KEY)
+# Edit .env with your credentials
+# Fill in: LANGSMITH_API_KEY, USERNAME_LANGSMITH_HUB, GOOGLE_API_KEY (or OPENAI_API_KEY)
 ```
 
-### 3. Pull dos prompts iniciais
+### 3. Pull the initial prompts
 
 ```bash
 python src/pull_prompts.py
 ```
 
-### 4. Push dos prompts otimizados
+### 4. Push the optimized prompts
 
 ```bash
 python src/push_prompts.py
 ```
 
-### 5. Executar avaliação
+### 5. Run evaluation
 
 ```bash
 python src/evaluate.py
 ```
 
-### 6. Executar testes
+### 6. Run tests
 
 ```bash
 pytest tests/test_prompts.py -v
@@ -158,24 +158,24 @@ pytest tests/test_prompts.py -v
 
 ---
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 mba-ia-pull-evaluation-prompt/
-├── .env.example              # Template das variáveis de ambiente
-├── requirements.txt          # Dependências Python
-├── README.md                 # Documentação do processo
+├── .env.example              # Environment variables template
+├── requirements.txt          # Python dependencies
+├── README.md                 # Process documentation
 ├── prompts/
-│   ├── bug_to_user_story_v1.yml  # Prompt inicial (baixa qualidade)
-│   └── bug_to_user_story_v2.yml  # Prompt otimizado
+│   ├── bug_to_user_story_v1.yml  # Initial prompt (low quality)
+│   └── bug_to_user_story_v2.yml  # Optimized prompt
 ├── datasets/
-│   └── bug_to_user_story.jsonl   # 15 exemplos de bugs
+│   └── bug_to_user_story.jsonl   # 15 bug examples
 ├── src/
-│   ├── pull_prompts.py       # Pull do LangSmith
-│   ├── push_prompts.py       # Push ao LangSmith
-│   ├── evaluate.py           # Avaliação automática
-│   ├── metrics.py            # 5 métricas implementadas
-│   └── utils.py              # Funções auxiliares
+│   ├── pull_prompts.py       # Pull from LangSmith
+│   ├── push_prompts.py       # Push to LangSmith
+│   ├── evaluate.py           # Automatic evaluation
+│   ├── metrics.py            # 5 implemented metrics
+│   └── utils.py              # Helper functions
 └── tests/
-    └── test_prompts.py       # Testes de validação
+    └── test_prompts.py       # Validation tests
 ```
