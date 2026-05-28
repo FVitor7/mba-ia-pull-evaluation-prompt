@@ -8,6 +8,7 @@ import json
 from typing import Dict, Any, Optional
 from pathlib import Path
 from dotenv import load_dotenv
+from pydantic import SecretStr
 
 load_dotenv()
 
@@ -203,9 +204,9 @@ def get_llm(model: Optional[str] = None, temperature: float = 0.0):
         return ChatOpenAI(
             model=model_name,
             temperature=temperature,
-            api_key=api_key
+            api_key=SecretStr(api_key)
         )
-
+    
     elif provider == 'google':
         from langchain_google_genai import ChatGoogleGenerativeAI
 
@@ -219,7 +220,7 @@ def get_llm(model: Optional[str] = None, temperature: float = 0.0):
         return ChatGoogleGenerativeAI(
             model=model_name,
             temperature=temperature,
-            google_api_key=api_key
+            google_api_key=SecretStr(api_key)
         )
 
     else:
